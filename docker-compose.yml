@@ -1,0 +1,57 @@
+version: '2'
+
+services:
+    localstack-s3:
+        image: localstack/localstack
+        environment:
+            - SERVICES=s3:4572
+            - DEFAULT_REGION=us-east-1
+        ports:
+            - "4572:4572"
+            - "8080:8080"
+        container_name: s3
+        extra_hosts:
+            - "dockerhost:$DOCKERHOST"
+        volumes:
+            - "/tmp/localstack/data:/tmp/localstack"
+            - "/var/run/docker.sock:/var/run/docker.sock"
+            - "./source:/source"
+    localstack-lambda:
+        image: localstack/localstack
+        environment:
+            - SERVICES=lambda:4574
+            - DEFAULT_REGION=us-east-1
+        container_name: lambda
+        extra_hosts:
+            - "dockerhost:$DOCKERHOST"
+        ports:
+            - "4574:4574"
+    localstack-sqs:
+        image: localstack/localstack
+        environment:
+            - SERVICES=sqs:4576
+            - DEFAULT_REGION=us-east-1
+        container_name: sqs
+        extra_hosts:
+            - "dockerhost:$DOCKERHOST"
+        ports:
+            - "4576:4576"
+    localstack-apigateway:
+        image: localstack/localstack
+        environment:
+            - SERVICES=apigateway:4567
+            - DEFAULT_REGION=us-east-1
+        container_name: apigateway
+        extra_hosts:
+            - "dockerhost:$DOCKERHOST"
+        ports:
+            - "4567:4567"
+    web:
+        build: .
+        ports:
+            - "5000:5000"
+        container_name: web
+        extra_hosts:
+            - "dockerhost:$DOCKERHOST"
+        volumes:
+            - "./source:/code"
