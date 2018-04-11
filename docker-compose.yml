@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
     localstack-s3:
@@ -15,7 +15,6 @@ services:
         volumes:
             - "/tmp/localstack/data:/tmp/localstack"
             - "/var/run/docker.sock:/var/run/docker.sock"
-            - "./source:/source"
     localstack-lambda:
         image: localstack/localstack
         environment:
@@ -54,4 +53,6 @@ services:
         extra_hosts:
             - "dockerhost:$DOCKERHOST"
         volumes:
-            - "./source:/code"
+            - "./source:/source"
+        depends_on:
+            - localstack-s3
